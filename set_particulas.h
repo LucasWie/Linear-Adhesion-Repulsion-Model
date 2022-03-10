@@ -11,8 +11,6 @@ using namespace std;
 vector <Particula> ubicar_particulas(int N,float x_max,float min_dist,vector<float> v_des){
   //srand(time(NULL));
 
-
-
   double distancia;
   int i = 0;
   int j;
@@ -50,4 +48,49 @@ vector <Particula> ubicar_particulas(int N,float x_max,float min_dist,vector<flo
   }
 
   return particulas;
+}
+
+
+
+int add_particle(vector<Particula> &particulas, int higher_id,float vd, float L){
+
+  Particula nueva;
+
+
+  nueva.set_id(higher_id + 1);
+  nueva.set_vel_x(0);
+  if (rand() < RAND_MAX/2.0){ // rand 50/50 para ver si entre por izquierda o derecha
+
+        nueva.set_velocidad_deseada(vd);
+        nueva.set_pos_x(0);
+        particulas.push_back(nueva);
+  }
+  else{
+
+      nueva.set_velocidad_deseada(-1*vd);
+      nueva.set_pos_x(L);
+      particulas.push_back(nueva);
+    }
+
+return (higher_id+1);
+}
+
+
+void erase_bordering_particle(vector<Particula> &particulas, float L){// en realidad solo la marca para ser eliminada en el calculo siguiente, no la elimina realmente
+  int id_erase = particulas[0].get_id();
+  float min_dist_border = (particulas[0].get_pos_x() < L-particulas[0].get_pos_x()) ? particulas[0].get_pos_x() : L-particulas[0].get_pos_x();
+  float dist_border;
+  for (int i=1; i<particulas.size();i++){
+    dist_border = (particulas[i].get_pos_x() < L-particulas[i].get_pos_x()) ? particulas[i].get_pos_x() : L-particulas[i].get_pos_x();
+    if (dist_border < min_dist_border){
+      min_dist_border = dist_border;
+      id_erase = particulas[i].get_id();
+    }
+  }
+  for (int i = 0; i<particulas.size();i++){
+    if (particulas[i].get_id() == id_erase){
+      particulas[i].set_out_limit();
+      break;
+    }
+  }
 }
