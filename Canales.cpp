@@ -9,7 +9,7 @@
 
 
 #include "Particula.h"
-#include "funciones.h"
+#include "Funciones_cuadratic_adhesion.h"
 #include "set_particulas.h"
 #include "vecinos.h"
 #include "Sim_core.h"
@@ -26,27 +26,32 @@ int main(){
   double d_eq = 12.0;
   double d_cut = 30;
   double f_rep = 30;
-  double f_adh = 0.75;
-  float eta=7;
+  double f_adh = 10;
+  float eta = 3;
 
+  default_random_engine generator;
+  //uniform_real_distribution<float> distribution(-eta/2.0, eta/2.0);
 
 //Definicion de parámetros. valores posibles para cada uno
   float inversion_prob_min = 3.0/1900;
   float prob_inversion_step;
 
-  vector <float> f_adhs = {0.75};
-  vector <string> f_adh_name = {"0.75"};
+  //vector <float> f_adhs = {0.75};
+  //vector <string> f_adh_name = {"0.75"};
+  vector <float> f_adhs = {0};
+  vector <string> f_adh_name = {"0"};
 
-  vector <float> d_cuts = {20,25,30,35,40};
-  vector <string> d_cuts_name = {"20","25","30","35","40"};
+
+  vector <float> d_cuts = {20,25,30,35};
+  vector <string> d_cuts_name = {"20","25","30","35"};
 
 
 //  vector <float> d_cuts = {20};
 //  vector <string> d_cuts_name = {"20"};
 
 
-  vector <float> d_eqs = {12,14,16,18,20};
-  vector <string> d_eqs_name = {"12","14","16","18","20"};
+  vector <float> d_eqs = {10,12,14,16,18,20};
+  vector <string> d_eqs_name = {"10","12","14","16","18","20"};
 
 
 //  vector <float> d_eqs = {16};
@@ -56,7 +61,7 @@ int main(){
 
 //srand(144);
 
-  float L = 700;   //Hacer mas preciso, sacado de experimentos, si no puro humo
+  float L = 650;   //Hacer mas preciso, sacado de experimentos, si no puro humo
   float t_max =  120;// 2 horas
 
   //Manejo de archivos. Donde y con qué nombre se guardarán
@@ -88,19 +93,19 @@ int main(){
           //vd_iniciales.clear();
           d_cut = d_cuts[test_d_cut];
           nombre_salida_base = ruta +"/Sim_";
-          nombre_salida = nombre_salida_base+"dcut_"+d_cuts_name[test_d_cut]+"d_eq_"+d_eqs_name[test_d_eq]+".txt";
+          nombre_salida = nombre_salida_base+"dcut_"+d_cuts_name[test_d_cut]+"_deq_"+d_eqs_name[test_d_eq]+".txt";
 
           clean_start_file(nombre_salida);
 
           for (int canal = 0; canal < 12; canal++ ){
             vector <string> output;
             int canal_a_imitar = rand()%densidades.size();
-            cout << "Canal a imitar: " << canal_a_imitar<<endl;
+            //cout << "Canal a imitar: " << canal_a_imitar<<endl;
             vector<int> n_por_tiempo = densidades[canal_a_imitar];
 
-            cout << "Por empezar la simulacion del canal: "<<canal <<" \n";
+            //cout << "Por empezar la simulacion del canal: "<<canal <<" \n";
 
-            output = simular(d_eq, d_cut, f_rep, f_adh, eta, inversion_prob_min, velocidades_reales,t_max ,L,n_por_tiempo,inv_cdf);
+            output = simular(d_eq, d_cut, f_rep, f_adh, generator,eta, inversion_prob_min, velocidades_reales,t_max ,L,n_por_tiempo,inv_cdf);
             escribir_posiciones(nombre_salida,output,canal);
           }
         }

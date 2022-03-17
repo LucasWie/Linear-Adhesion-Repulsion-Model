@@ -13,7 +13,8 @@ void format_to_output(vector<Particula> &particulas, vector<string> &output, flo
 }
 
 
-vector<string> simular(double d_eq, double d_cut, double f_rep, double f_adh, float eta, float inversion_prob_min, vector<float>v_real, float t_max, float L, vector<int> densidad, map<float,float> inv_cdf){
+
+vector<string> simular(double d_eq, double d_cut, double f_rep, double f_adh,default_random_engine &generator,float eta, float inversion_prob_min, vector<float>v_real, float t_max, float L, vector<int> densidad, map<float,float> inv_cdf){
 
   // Buscar el dt correcto se necesita la velocidad y la distancia a la que se relacionan
   float vel_max_esperada = *max_element(v_real.begin(),v_real.end());
@@ -47,7 +48,7 @@ vector<string> simular(double d_eq, double d_cut, double f_rep, double f_adh, fl
   for (int i = 1; i<(t_max/dt); i++){//for del tiempo
         t = t + dt;
         vecinos = calcular_vecinos(particulas,d_cut,L);
-        calcular_vel(particulas, vecinos, d_eq, d_cut, f_rep, f_adh, eta);
+        calcular_vel(particulas, vecinos, d_eq, d_cut, f_rep, f_adh, generator,eta);
         mover(particulas, dt, L, prob_inversion_step);
 
         if(t >= round(t)  && (t - round(t) < dt)){
